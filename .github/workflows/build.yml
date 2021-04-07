@@ -1,0 +1,41 @@
+name: Build
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [
+          {GOOS: 'linux', X: ''},
+          {GOOS: 'windows', X: '.exe'}
+        ]
+        GOARCH: ['amd64', '386']
+    #    os: ['ubuntu-20.04', 'windows-2019']
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    - uses: actions/setup-go@v2
+      with:
+        go-version: 1.16.x
+    - run: |
+        mkdir -p dist
+        go build -o dist/hdb-$GOOS-$GOARCH$X
+      env:
+        GOOS: ${{ matrix.os.GOOS }}
+        X: ${{ matrix.os.X }}
+        GOARCH: ${{ matrix.GOARCH }}
+      shell: bash
+    - uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: dist/hdb-*
