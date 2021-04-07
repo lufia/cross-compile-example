@@ -1,8 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 func main() {
-	root := Fsroot()
-	fmt.Println(root)
+	log.SetFlags(0)
+
+	size, err := DiskAvail(Fsroot())
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println("avail size(GB)", size/1024/1024/1024)
 }
