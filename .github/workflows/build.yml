@@ -34,6 +34,7 @@ jobs:
         GOOS: ${{ matrix.os.GOOS }}
         X: ${{ matrix.os.X }}
         GOARCH: ${{ matrix.GOARCH }}
+        CGO_ENABLED: 1
       shell: bash
     - uses: actions/upload-artifact@v2
       with:
